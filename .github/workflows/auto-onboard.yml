@@ -1,0 +1,46 @@
+name: Auto-onboard new repositories
+on:
+  schedule:
+    - cron: '17 2 * * *'
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: Create draft PRs (leave unchecked to preview only)
+        type: boolean
+        required: false
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: creative-guard-auto-onboard
+  cancel-in-progress: false
+jobs:
+  scan:
+    if: vars.CG_ONBOARDING_CLIENT_ID != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3
+        id: app-token
+        with:
+          client-id: ${{ vars.CG_ONBOARDING_CLIENT_ID }}
+          private-key: ${{ secrets.CG_ONBOARDING_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          permission-contents: write
+          permission-pull-requests: write
+          permission-workflows: write
+      - name: Scan owned repositories
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GITHUB_API_URL: ${{ github.api_url }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          APPLY: ${{ github.event_name == 'schedule' || inputs.apply }}
+        run: |
+          if [ "$APPLY" = 'true' ]; then
+            node scripts/auto-onboard.mjs --apply --max-prs 5
+          else
+            node scripts/auto-onboard.mjs --max-prs 5
+          fi
