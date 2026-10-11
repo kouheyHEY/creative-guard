@@ -28,15 +28,27 @@ The check validates that there is exactly one well-formed, unexpired focus. A no
 
 ## Installation in each repository
 
-1. Create labels `creative-guard:focus`, `creative-guard:idea`, `creative-guard:later`, and `creative-guard:exception`.
-2. Copy `examples/creative-guard.yml` to `.github/workflows/creative-guard.yml` and the three templates in `examples/ISSUE_TEMPLATE/` to `.github/ISSUE_TEMPLATE/`.
-3. Create one focus Issue using the template. Set a short lock period, such as seven days.
-4. Open a test PR with `Creative Guard Focus: #<focus issue number>`. Confirm `check` passes; remove the line and confirm failure.
-5. After the check has appeared, require both a PR and the `check` job in a branch ruleset for the default branch. Keep the ruleset in evaluate mode first; switch it to active after the focus and exception paths have been tested.
+For a new repository, clone both this package and the target repository locally. Run the installer from this package with the path to the target repository root:
+
+```sh
+node scripts/install-repo.mjs /path/to/new-repo
+node scripts/install-repo.mjs /path/to/new-repo --apply
+```
+
+The first command is a read-only preview; `--apply` adds only missing files. It never replaces a different existing workflow or template. If the target has `AGENTS.md` or `.github/AGENTS.md`, read and follow it before rerunning with `--apply --ack-instructions`. Review the resulting diff and commit it on a branch or submit a PR. The installer does **not** create labels, Issues, rulesets, or a PR, and it does not run automatically when a GitHub repository is created.
+
+After the files are reviewed and merged:
+
+1. Create labels `creative-guard:focus`, `creative-guard:idea`, `creative-guard:later`, and `creative-guard:exception` in the target repository.
+2. Create one focus Issue using the template. Set a short lock period, such as seven days.
+3. Open a test PR with `Creative Guard Focus: #<focus issue number>`. Confirm `check` passes; remove the line and confirm failure.
+4. After the check has appeared, require both a PR and the `check` job in a branch ruleset for the default branch. Keep the ruleset in evaluate mode first; switch it to active after the focus and exception paths have been tested.
+
+For manual installation instead of the command, copy `examples/creative-guard.yml` to `.github/workflows/creative-guard.yml` and the three templates in `examples/ISSUE_TEMPLATE/` to `.github/ISSUE_TEMPLATE/`. Do not overwrite an existing target file without reviewing it.
 
 Use `AI_PROMPT.md` with Codex, Claude, Gemini, or another agent that processes ideas. A provider API key is not needed for the Action. The agent can submit ideas through GitHub Issues and leave classification comments; the same guard applies to every PR. The AI recommendation is advisory; the owner must still review whether a PR truly fits the focus scope.
 
-For a personal GitHub account, there is no single organization-level required-workflow setting for all owned repositories. Install the small workflow and ruleset in each repository. The shared Action in this repository supplies one source of truth for the code. The sample caller pins a tested commit SHA. New repositories need the same installation steps.
+For a personal GitHub account, there is no single organization-level required-workflow setting for all owned repositories. Install the small workflow and ruleset in each repository. The shared Action in this repository supplies one source of truth for the code. The sample caller pins a tested commit SHA, so Action updates are not automatically propagated to existing callers. New repositories need the same installation steps.
 
 ## Permissions and rollout safety
 
