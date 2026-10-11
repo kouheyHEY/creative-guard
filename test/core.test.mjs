@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { approvalDigest, evaluate, labels, parseFocus } from '../src/core.mjs';
+import { approvalDigest, evaluate, labels, parseFocus, todayInZone } from '../src/core.mjs';
 
 const focusBody = `## Outcome
 Ship one playable level.
@@ -48,6 +48,12 @@ test('focus fields and lock expiry are checked', () => {
   assert.ok(parseFocus(`## Outcome\n<!-- placeholder -->\n## Done when\n- done\n## Scope\nwork\n## Lock until\n2026-10-18`).errors.includes('Outcome is required'));
   assert.equal(evaluate({ ...base, today: '2026-10-19' }).ok, false);
   assert.equal(parseFocus(focusBody.replace('2026-10-18', '2026-02-30')).lockUntil, null);
+});
+
+test('date boundary follows the configured time zone', () => {
+  const instant = new Date('2026-10-11T16:00:00Z');
+  assert.equal(todayInZone(instant, 'UTC'), '2026-10-11');
+  assert.equal(todayInZone(instant, 'Asia/Tokyo'), '2026-10-12');
 });
 
 test('exception needs current owner approval and must be unexpired', () => {

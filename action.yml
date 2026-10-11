@@ -8,6 +8,10 @@ inputs:
     description: check or intake
     required: false
     default: check
+  time-zone:
+    description: IANA time zone used for Lock until and Expires dates
+    required: false
+    default: UTC
 runs:
   using: composite
   steps:
@@ -15,4 +19,5 @@ runs:
       env:
         CG_TOKEN: ${{ inputs.github-token }}
         CG_MODE: ${{ inputs.mode }}
+        CG_TIME_ZONE: ${{ inputs.time-zone }}
       run: node "$GITHUB_ACTION_PATH/src/run.mjs"

@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import { approvalDigest, evaluate, labels, parseException } from './core.mjs';
+import { approvalDigest, evaluate, labels, parseException, todayInZone } from './core.mjs';
 
 const token = process.env.CG_TOKEN;
 const repository = process.env.GITHUB_REPOSITORY;
@@ -55,7 +55,7 @@ async function check() {
     exceptionIssue,
     exceptionComments,
     owner: repository.split('/')[0],
-    today: new Date().toISOString().slice(0, 10),
+    today: todayInZone(new Date(), process.env.CG_TIME_ZONE || 'UTC'),
   });
   if (result.ok) {
     console.log(result.reason);

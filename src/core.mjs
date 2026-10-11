@@ -23,6 +23,15 @@ export function isoDay(value) {
   return Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== day ? null : day;
 }
 
+export function todayInZone(instant, timeZone) {
+  return new Intl.DateTimeFormat('sv-SE', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(instant);
+}
+
 export function parseFocus(body) {
   const outcome = section(body, 'Outcome');
   const done = section(body, 'Done when');

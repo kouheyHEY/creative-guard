@@ -11,7 +11,7 @@ Creative Guard protects a short creative commitment across GitHub repositories. 
 | Parked idea | Both `creative-guard:idea` and `creative-guard:later` | Reconsider at focus review |
 | Exception request | Open Issue with `creative-guard:exception` | Owner posts body-specific approval comment |
 
-The focus body must contain `## Outcome`, `## Done when`, `## Scope`, and `## Lock until` (an ISO date). The lock date is inclusive; afterward PR checks fail until the focus is reviewed and updated. An exception body must contain `## Reason`, `## Requested change`, and `## Expires`.
+The focus body must contain `## Outcome`, `## Done when`, `## Scope`, and `## Lock until` (an ISO date). The lock date is inclusive; afterward PR checks fail until the focus is reviewed and updated. An exception body must contain `## Reason`, `## Requested change`, and `## Expires`. Dates use the `time-zone` input (UTC by default; the sample caller uses Asia/Tokyo).
 
 The Issue intake Action comments with the approval command for a complete exception request. The owner approves by posting that exact command. It includes the first 12 characters of the SHA-256 hash of the exception body after CRLF is normalized to LF. Editing the request invalidates the approval. The repository owner login is the approver in this personal-account MVP.
 
