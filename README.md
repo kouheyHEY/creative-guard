@@ -50,6 +50,21 @@ Use `AI_PROMPT.md` with Codex, Claude, Gemini, or another agent that processes i
 
 For a personal GitHub account, there is no single organization-level required-workflow setting for all owned repositories. Install the small workflow and ruleset in each repository. The shared Action in this repository supplies one source of truth for the code. The sample caller pins a tested commit SHA, so Action updates are not automatically propagated to existing callers. New repositories need the same installation steps.
 
+## Automatic onboarding for newly created repositories
+
+The optional `Auto-onboard new repositories` workflow scans repositories accessible to a GitHub App every day (02:17 UTC / 11:17 JST). It works regardless of how a repository was created. A manual run defaults to preview mode; scheduled runs create at most five **draft PRs** per run. No PR is merged automatically. It skips the source package, archived/disabled or empty repositories, repositories with all four target files, and repositories needing human review because Issues are disabled or there is `AGENTS.md`, partial installation, a conflicting path, a truncated Git tree, or an existing automation branch. It never replaces an existing file or enables branch rulesets.
+
+The workflow stays inactive until the following credentials are configured. Do not use a broad personal access token or paste a private key into an Issue or PR.
+
+1. Create a private GitHub App for your personal account with repository permissions **Metadata: read**, **Contents: read/write**, **Pull requests: read/write**, and **Workflows: read/write**. Webhooks are not needed for the scheduled scanner.
+2. Install the App on your personal account with **All repositories** selected, so it can see repositories created later.
+3. In this `creative-guard` repository, set Actions variable `CG_ONBOARDING_CLIENT_ID` to the App's Client ID and Actions secret `CG_ONBOARDING_PRIVATE_KEY` to its generated private key. The workflow requests only the three write permissions above in its short-lived installation token.
+4. Run `Auto-onboard new repositories` manually once with **apply unchecked**. Inspect the JSON statuses (`ready`, `installed`, `review`, `skip`, `pending`, `error`). Then run it with **apply checked** to create draft PRs for any `ready` repositories. Scheduled runs use apply mode after setup.
+
+An empty new repository is skipped until it has a first commit. A draft PR may show a failing Creative Guard check until a valid Focus Issue is created; required checks remain off. After review and merge, create the four labels and Focus Issue as described above.
+
+The scheduled workflow is not a real-time creation event and GitHub may delay scheduled runs. In a public repository, GitHub automatically disables scheduled workflows after 60 days without repository activity; re-enable this workflow in the Actions tab if that happens. The manual workflow trigger remains available. For a local, read-only audit using a GitHub App installation token, run `node scripts/auto-onboard.mjs --owner OWNER` without `--apply`.
+
 ## Permissions and rollout safety
 
 The PR job needs only `issues: read` and `pull-requests: read`. The Issue intake job needs `issues: write` to add a label. No workflow checks out PR code or passes a secret to an untrusted PR. Adding the files alone does not block merges; the required check ruleset does. Install and test the workflow before enabling the ruleset to avoid blocking existing work. Existing workflows and files should remain untouched.
