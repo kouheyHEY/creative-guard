@@ -1,0 +1,18 @@
+name: Creative Guard
+description: Keep one active creative focus and park new ideas until review.
+inputs:
+  github-token:
+    description: Token with issues read access; issues write access for intake.
+    required: true
+  mode:
+    description: check or intake
+    required: false
+    default: check
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        CG_TOKEN: ${{ inputs.github-token }}
+        CG_MODE: ${{ inputs.mode }}
+      run: node "$GITHUB_ACTION_PATH/src/run.mjs"
