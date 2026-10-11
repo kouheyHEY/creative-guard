@@ -52,14 +52,15 @@ For a personal GitHub account, there is no single organization-level required-wo
 
 ## Automatic onboarding for newly created repositories
 
-The optional `Auto-onboard new repositories` workflow scans repositories accessible to a GitHub App every day (02:17 UTC / 11:17 JST). It works regardless of how a repository was created. A manual run defaults to preview mode; scheduled runs create at most five **draft PRs** per run. No PR is merged automatically. It skips the source package, archived/disabled or empty repositories, repositories with all four target files, and repositories needing human review because Issues are disabled or there is `AGENTS.md`, partial installation, a conflicting path, a truncated Git tree, or an existing automation branch. It never replaces an existing file or enables branch rulesets.
+The optional `Auto-onboard new repositories` workflow scans repositories accessible to a GitHub App every day (02:17 UTC / 11:17 JST). It works regardless of how a repository was created. A manual run defaults to preview mode; scheduled runs create at most five **draft PRs** per run only after `CG_ONBOARDING_ENABLED` is set to `true`. No PR is merged automatically. It skips the source package, archived/disabled or empty repositories, repositories with all four target files, and repositories needing human review because Issues are disabled or there is `AGENTS.md`, partial installation, a conflicting path, a truncated Git tree, or an existing automation branch. It never replaces an existing file or enables branch rulesets.
 
-The workflow stays inactive until the following credentials are configured. Do not use a broad personal access token or paste a private key into an Issue or PR.
+The workflow stays inactive until the following credentials are configured. Once configured, scheduled scans remain read-only until Actions variable `CG_ONBOARDING_ENABLED` is set to `true`. Do not use a broad personal access token or paste a private key into an Issue or PR.
 
 1. Create a private GitHub App for your personal account with repository permissions **Metadata: read**, **Contents: read/write**, **Pull requests: read/write**, and **Workflows: read/write**. Webhooks are not needed for the scheduled scanner.
 2. Install the App on your personal account with **All repositories** selected, so it can see repositories created later.
 3. In this `creative-guard` repository, set Actions variable `CG_ONBOARDING_CLIENT_ID` to the App's Client ID and Actions secret `CG_ONBOARDING_PRIVATE_KEY` to its generated private key. The workflow requests only the three write permissions above in its short-lived installation token.
-4. Run `Auto-onboard new repositories` manually once with **apply unchecked**. Inspect the JSON statuses (`ready`, `installed`, `review`, `skip`, `pending`, `error`). Then run it with **apply checked** to create draft PRs for any `ready` repositories. Scheduled runs use apply mode after setup.
+4. Run `Auto-onboard new repositories` manually once with **apply unchecked**. Inspect the JSON statuses (`ready`, `installed`, `review`, `skip`, `pending`, `error`). Then run it with **apply checked** to create draft PRs for any `ready` repositories.
+5. After reviewing the draft PRs, set Actions variable `CG_ONBOARDING_ENABLED` to `true` to allow scheduled runs to create future draft PRs. Remove or change this variable to pause automatic PR creation without removing the App credentials.
 
 An empty new repository is skipped until it has a first commit. A draft PR may show a failing Creative Guard check until a valid Focus Issue is created; required checks remain off. After review and merge, create the four labels and Focus Issue as described above.
 
