@@ -34,9 +34,9 @@ The check validates that there is exactly one well-formed, unexpired focus. A no
 4. Open a test PR with `Creative Guard Focus: #<focus issue number>`. Confirm `check` passes; remove the line and confirm failure.
 5. After the check has appeared, require both a PR and the `check` job in a branch ruleset for the default branch. Keep the ruleset in evaluate mode first; switch it to active after the focus and exception paths have been tested.
 
-Use `AI_PROMPT.md` with Codex, Claude, Gemini, or another agent that processes ideas. A provider API key is not needed for the Action. The agent can submit ideas through GitHub Issues and leave classification comments; the same guard applies to every PR.
+Use `AI_PROMPT.md` with Codex, Claude, Gemini, or another agent that processes ideas. A provider API key is not needed for the Action. The agent can submit ideas through GitHub Issues and leave classification comments; the same guard applies to every PR. The AI recommendation is advisory; the owner must still review whether a PR truly fits the focus scope.
 
-For a personal GitHub account, there is no single organization-level required-workflow setting for all owned repositories. Install the small workflow and ruleset in each repository. The shared Action in this repository supplies one source of truth for the code. Pin to a tested release tag or commit SHA in production. New repositories need the same installation steps.
+For a personal GitHub account, there is no single organization-level required-workflow setting for all owned repositories. Install the small workflow and ruleset in each repository. The shared Action in this repository supplies one source of truth for the code. The sample caller pins a tested commit SHA. New repositories need the same installation steps.
 
 ## Permissions and rollout safety
 
@@ -45,3 +45,5 @@ The PR job needs only `issues: read` and `pull-requests: read`. The Issue intake
 ## Local verification
 
 Run `node --test test/*.test.mjs` with Node 20 or later. The CI workflow runs the same tests on push and PR.
+
+To survey an owner's repositories before a broad rollout, run `node scripts/audit-rollout.mjs OWNER` with an authenticated GitHub CLI. It reads the default-branch trees and reports existing target files, root or `.github` AGENTS.md instructions, archives, and truncated trees. It makes no changes.

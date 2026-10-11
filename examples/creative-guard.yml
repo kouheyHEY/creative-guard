@@ -12,7 +12,7 @@ jobs:
       issues: read
       pull-requests: read
     steps:
-      - uses: kouheyHEY/creative-guard@v1
+      - uses: kouheyHEY/creative-guard@4de5ca20e86e332addcec28ba9353eeca72df4c1
         with:
           github-token: ${{ github.token }}
           mode: check
@@ -23,7 +23,7 @@ jobs:
     permissions:
       issues: write
     steps:
-      - uses: kouheyHEY/creative-guard@v1
+      - uses: kouheyHEY/creative-guard@4de5ca20e86e332addcec28ba9353eeca72df4c1
         with:
           github-token: ${{ github.token }}
           mode: intake
