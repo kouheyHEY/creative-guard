@@ -37,7 +37,7 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           GITHUB_API_URL: ${{ github.api_url }}
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
-          APPLY: ${{ github.event_name == 'schedule' || inputs.apply }}
+          APPLY: ${{ (github.event_name == 'schedule' && vars.CG_ONBOARDING_ENABLED == 'true') || (github.event_name == 'workflow_dispatch' && inputs.apply) }}
         run: |
           if [ "$APPLY" = 'true' ]; then
             node scripts/auto-onboard.mjs --apply --max-prs 5
