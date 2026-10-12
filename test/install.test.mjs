@@ -43,6 +43,15 @@ test('preview is read-only, then apply copies the four exact files and rerun is 
   assert.match(again.stdout, /already installed/);
 });
 
+test('focus template prompts a sub-issue plan without changing the required guard fields', async () => {
+  const body = (await readFile(join(packageRoot, 'examples/ISSUE_TEMPLATE/creative-focus.md'), 'utf8')).replaceAll('\r\n', '\n');
+  for (const heading of ['Outcome', 'Done when', 'Scope', 'Lock until', 'Child issue plan']) {
+    assert.match(body, new RegExp(`^## ${heading}$`, 'm'));
+  }
+  assert.match(body, /Create sub-issue/);
+  assert.match(body, /Do not add the focus label to child issues/);
+});
+
 test('different existing target file is never overwritten, including when other targets are missing', async t => {
   const dir = await fixture(t);
   await mkdir(join(dir, '.github', 'workflows'), { recursive: true });

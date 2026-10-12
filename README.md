@@ -15,6 +15,12 @@ The focus body must contain `## Outcome`, `## Done when`, `## Scope`, and `## Lo
 
 The Issue intake Action comments with the approval command for a complete exception request. The owner approves by posting that exact command. It includes the first 12 characters of the SHA-256 hash of the exception body after CRLF is normalized to LF. Editing the request invalidates the approval. The repository owner login is the approver in this personal-account MVP.
 
+## From a Focus Issue to sub-issues
+
+The Focus Issue is the one parent that defines **what** is being finished. Its optional `Child issue plan` lists 2–5 small results needed to meet `Done when`; it must not introduce a second goal. After opening the Focus Issue, use GitHub's **Create sub-issue** button on that Issue to create a child for each result. Alternatively, create an Issue first and attach it as a sub-issue to the Focus Issue. Each child should state its result, a concrete completion condition, and which part of the parent Scope it covers. Do not give children the `creative-guard:focus` label: there must still be exactly one active Focus Issue.
+
+Work on one child at a time. A PR for a child still needs `Creative Guard Focus: #<parent number>` in its description; it may also mention or close the child Issue. Creative Guard checks the parent link, not the GitHub parent–child relationship or whether the code fulfills a child. A new idea outside the parent Scope belongs in an Idea Issue, not a new child. At focus review, compare the parent `Done when` with the child results, then close or revise the Focus Issue deliberately. Creating children is optional for a small Focus; it never changes the lock date or exception rules.
+
 ## PR contract
 
 Add one of these exact lines to the PR description:
@@ -40,7 +46,7 @@ The first command is a read-only preview; `--apply` adds only missing files. It 
 After the files are reviewed and merged:
 
 1. Create labels `creative-guard:focus`, `creative-guard:idea`, `creative-guard:later`, and `creative-guard:exception` in the target repository.
-2. Create one focus Issue using the template. Set a short lock period, such as seven days.
+2. Create one focus Issue using the template. Set a short lock period, such as seven days. If the outcome needs multiple pieces of work, turn its `Child issue plan` into GitHub sub-issues.
 3. Open a test PR with `Creative Guard Focus: #<focus issue number>`. Confirm `check` passes; remove the line and confirm failure.
 4. After the check has appeared, require both a PR and the `check` job in a branch ruleset for the default branch. Keep the ruleset in evaluate mode first; switch it to active after the focus and exception paths have been tested.
 
