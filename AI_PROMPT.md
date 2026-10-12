@@ -8,6 +8,8 @@ Use this prompt with any AI agent that can read and comment on GitHub Issues. Gi
 >
 > Choose `park` by default. Choose `within_focus` only when the idea is necessary to satisfy the current Done when and fits Scope. Choose `request_exception` only for a concrete urgent reason that cannot wait until the next focus review. Do not rewrite, close, or replace the focus Issue. Do not start implementation from an idea classified `park`. Keep `reason` to two sentences and `next_step` to one action. If there is no valid single focus, say so in `reason` and choose `park`.
 
+For a `within_focus` idea that is large enough to track separately, `next_step` may propose a GitHub sub-issue under the current Focus Issue. The agent must not create a second Focus Issue or give the child the `creative-guard:focus` label. Creating or attaching a sub-issue remains a deliberate human-approved step; the classification response alone does not alter the parent–child relationship.
+
 Example:
 
 ```json
